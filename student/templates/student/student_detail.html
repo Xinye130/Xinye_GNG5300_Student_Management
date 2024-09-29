@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+
+{% block page_title %}
+<h2>{{ student.first_name }} {{ student.last_name }}</h2>
+{% endblock page_title %}
+
+{% block page_content %}
+<p>First Name: {{ student.first_name }}</p>
+<p>Last Name: {{ student.last_name }}</p>
+<p>Email: {{ student.email }}</p>
+<p>Date of Birth: {{ student.date_of_birth }}</p>
+<p>Enrollment Date: {{ student.enrollment_date }}</p>
+<p>Grade: {{ student.grade }}</p>
+<a href="{% url 'student_edit' student.pk %}">Edit Student</a>
+{% endblock page_content %}
