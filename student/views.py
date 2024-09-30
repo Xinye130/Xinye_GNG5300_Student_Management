@@ -3,6 +3,9 @@ from django.shortcuts import render
 from student.models import Student
 from student.forms import AddStudentForm
 from student.forms import EditStudentForm
+from django.contrib.auth.forms import *
+from student.forms import RegistrationForm
+from django.contrib.auth.decorators import login_required
 
 # Create your views here.
 def student_list(request):
@@ -13,6 +16,7 @@ def student_detail(request, pk):
     student = Student.objects.get(pk=pk)
     return render(request, 'student/student_detail.html', {'student': student})
 
+@login_required
 def student_add(request):
     form = AddStudentForm()
     if request.method == 'POST':
@@ -29,6 +33,7 @@ def student_add(request):
             return render(request, 'student/student_add.html', {'message': 'Student added successfully!'})
     return render(request, 'student/student_add.html', {'form': form})
 
+@login_required
 def student_edit(request, pk):
     student = Student.objects.get(pk=pk)
     form = EditStudentForm(pk)
@@ -44,3 +49,13 @@ def student_edit(request, pk):
             student.save()
             return render(request, 'student/student_edit.html', {'message': 'Student updated successfully!', 'student': student})
     return render(request, 'student/student_edit.html', {'form': form})
+
+def register(request):
+    if request.method == 'POST':
+        form = RegistrationForm(request.POST)
+        if form.is_valid():
+            user = form.save()
+            return render(request, 'authentication/register.html', {'message': 'User created successfully!'})
+    else:
+        form = RegistrationForm()
+    return render(request, 'authentication/register.html', {'form': form})

@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+
+{% block page_title %}
+<h2>User Registration</h2>
+{% endblock page_title %}
+
+{% block page_content %}
+{%if message %}
+<div class="alert alert-success">
+    {{ message }} Redirecting to login page in <span id="countdown">5</span> seconds...
+</div>
+<script>
+    var countdownElement = document.getElementById('countdown');
+    var countdown = 5;
+    setInterval(function () {
+        if (countdown > 0) {
+            countdown--;
+            countdownElement.textContent = countdown;
+        }
+    }, 1000);
+</script>
+<script>
+    setTimeout(function () {
+        window.location.href = "{% url 'login' %}";
+    }, 5000);
+</script>
+
+{% else %}
+<form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">Register</button>
+</form>
+
+{% endif %}
+{% endblock page_content%}

@@ -2,6 +2,8 @@ from django import forms
 import re
 from django.core.exceptions import ValidationError
 from student.models import Student
+from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth.models import User
 
 def validate_email(value):
     email_regex = r"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$"
@@ -64,3 +66,10 @@ class EditStudentForm(forms.Form):
         label='Grade', 
         widget=forms.Select(choices=[(i, str(i)) for i in range(1, 13)]),
     )
+
+class RegistrationForm(UserCreationForm):
+    email = forms.EmailField(required=True)
+
+    class Meta:
+        model = User
+        fields = ['username', 'email', 'password1', 'password2']
