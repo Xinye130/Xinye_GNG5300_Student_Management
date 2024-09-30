@@ -1,16 +1,15 @@
 from django.http import HttpResponseRedirect
 from django.shortcuts import render
 from student.models import Student
-from student.forms import AddStudentForm
-from student.forms import EditStudentForm
+from student.forms import AddStudentForm, EditStudentForm, RegistrationForm, SearchStudentForm
 from django.contrib.auth.forms import *
-from student.forms import RegistrationForm
 from django.contrib.auth.decorators import login_required
 
 # Create your views here.
 def student_list(request):
+    form = SearchStudentForm()
     students = Student.objects.all().order_by('first_name')
-    return render(request, 'student/student_list.html', {'students': students})
+    return render(request, 'student/student_list.html', {'students': students, 'form': form})
 
 def student_detail(request, pk):
     student = Student.objects.get(pk=pk)
@@ -49,6 +48,17 @@ def student_edit(request, pk):
             student.save()
             return render(request, 'student/student_edit.html', {'message': 'Student updated successfully!', 'student': student})
     return render(request, 'student/student_edit.html', {'form': form})
+
+def student_search(request):
+    form = SearchStudentForm()
+    students = Student.objects.all().order_by('first_name')
+    if request.method == 'POST':
+        form = SearchStudentForm(request.POST)
+        if form.is_valid():
+            query = form.cleaned_data['query'].strip()
+            students = Student.objects.filter(first_name__icontains=query) | Student.objects.filter(last_name__icontains=query).order_by('first_name')
+            return render(request, 'student/student_search.html', {'students': students})
+    return render(request, 'student/student_list.html', {'students': students, 'form': form})
 
 def register(request):
     if request.method == 'POST':

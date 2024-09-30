@@ -1,15 +1,11 @@
 {% extends "base.html" %}
 
 {% block page_title %}
-<h2>Student List</h2>
+<h2>Search Result</h2>
 {% endblock page_title %}
 
 {% block page_content %}
-<form action="{% url 'student_search' %}" method="post">
-    {% csrf_token %}
-    {{ form.query }}
-    <button class="btn btn-outline-success" type="submit">Search</button>
-</form>
+{% if students %}
 <ul>
     {% for student in students %}
     <li>
@@ -18,4 +14,11 @@
     </li>
     {% endfor %}
 </ul>
+
+{% else %}
+<p>No student found.</p>
+
+{% endif %}
+
+<p><a href="{% url 'student_list' %}">Back to Student List</a></p>
 {% endblock page_content %}

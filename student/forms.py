@@ -10,6 +10,10 @@ def validate_email(value):
     if not re.match(email_regex, value):
         raise ValidationError("Please enter a valid email address.")
 
+def validate_spaces(value):
+    if value.strip() == '':
+        raise ValidationError("This field cannot be empty.")
+
 class AddStudentForm(forms.Form):
     first_name = forms.CharField(label='First Name', max_length=100)
     last_name = forms.CharField(label='Last Name', max_length=100)
@@ -65,6 +69,16 @@ class EditStudentForm(forms.Form):
     grade = forms.IntegerField(
         label='Grade', 
         widget=forms.Select(choices=[(i, str(i)) for i in range(1, 13)]),
+    )
+
+class SearchStudentForm(forms.Form):
+    query = forms.CharField(
+        label='Search Query',
+        max_length=100,
+        widget=forms.TextInput(
+            attrs={"class": "form-control", "placeholder": "Search for Student by Name", "style": "width: 200px;"}
+        ),
+        validators=[validate_spaces],
     )
 
 class RegistrationForm(UserCreationForm):
