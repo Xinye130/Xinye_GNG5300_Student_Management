@@ -4,12 +4,17 @@ from student.models import Student
 from student.forms import AddStudentForm, EditStudentForm, RegistrationForm, SearchStudentForm
 from django.contrib.auth.forms import *
 from django.contrib.auth.decorators import login_required
+from django.core.paginator import Paginator
 
 # Create your views here.
 def student_list(request):
     form = SearchStudentForm()
     students = Student.objects.all().order_by('first_name')
-    return render(request, 'student/student_list.html', {'students': students, 'form': form})
+    paginator = Paginator(students, 5)  # Show 5 students per page.
+
+    page_number = request.GET.get("page")
+    page_obj = paginator.get_page(page_number)
+    return render(request, 'student/student_list.html', {'students': students, 'form': form, "page_obj": page_obj})
 
 def student_detail(request, pk):
     student = Student.objects.get(pk=pk)
