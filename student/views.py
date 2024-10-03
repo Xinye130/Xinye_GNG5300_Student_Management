@@ -17,7 +17,11 @@ def student_list(request):
     return render(request, 'student/student_list.html', {'students': students, 'form': form, "page_obj": page_obj})
 
 def student_detail(request, pk):
-    student = Student.objects.get(pk=pk)
+    try:
+        student = Student.objects.get(pk=pk)
+    except Student.DoesNotExist:
+        return render(request, '404.html', {'message': 'Student not found!'})
+        
     return render(request, 'student/student_detail.html', {'student': student})
 
 @login_required

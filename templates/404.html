@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+
+{% block page_title %}
+<h2>Oops! Looks like the page does not exist.</h2>
+{% endblock page_title %}
+
+{% block page_content %}
+{% if message == "Student not found!" %}
+<p>Sorry, the student you are looking for does not exist. Please check the URL and try again.</p>
+{% else %}
+<p>Sorry, the page you are looking for does not exist. Please check the URL and try again.</p>
+{% endif %}
+
+<p><a href="{% url 'student_list' %}">Back to Student List</a></p>
+{% endblock page_content %}
