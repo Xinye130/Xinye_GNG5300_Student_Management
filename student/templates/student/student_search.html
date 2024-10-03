@@ -5,6 +5,7 @@
 {% endblock page_title %}
 
 {% block page_content %}
+{% if success %}
 {% if students %}
 <ul>
     {% for student in students %}
@@ -14,11 +15,14 @@
     </li>
     {% endfor %}
 </ul>
-
 {% else %}
 <p>No student found.</p>
-
 {% endif %}
-
 <p><a href="{% url 'student_list' %}">Back to Student List</a></p>
+
+{% else %}
+<script>
+    window.location.href = "{% url 'student_list' %}";
+</script>
+{% endif %}
 {% endblock page_content %}

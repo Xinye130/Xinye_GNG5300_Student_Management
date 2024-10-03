@@ -26,12 +26,15 @@ def student_add(request):
     if request.method == 'POST':
         form = AddStudentForm(request.POST)
         if form.is_valid():
+            message = ''
             first_name = form.cleaned_data['first_name']
             last_name = form.cleaned_data['last_name']
             email = form.cleaned_data['email']
             date_of_birth = form.cleaned_data['date_of_birth']
             enrollment_date = form.cleaned_data['enrollment_date']
             grade = form.cleaned_data['grade']
+            
+            # Check if student already exists
             student = Student(first_name=first_name, last_name=last_name, email=email, date_of_birth=date_of_birth, enrollment_date=enrollment_date, grade=grade)
             student.save()
             return render(request, 'student/student_add.html', {'message': 'Student added successfully!'})
@@ -55,15 +58,13 @@ def student_edit(request, pk):
     return render(request, 'student/student_edit.html', {'form': form})
 
 def student_search(request):
-    form = SearchStudentForm()
-    students = Student.objects.all().order_by('first_name')
     if request.method == 'POST':
         form = SearchStudentForm(request.POST)
         if form.is_valid():
             query = form.cleaned_data['query'].strip()
             students = Student.objects.filter(first_name__icontains=query) | Student.objects.filter(last_name__icontains=query).order_by('first_name')
-            return render(request, 'student/student_search.html', {'students': students})
-    return render(request, 'student/student_list.html', {'students': students, 'form': form})
+            return render(request, 'student/student_search.html', {'students': students, 'success': True})
+    return render(request, 'student/student_search.html', {'success': False})
 
 def register(request):
     if request.method == 'POST':
