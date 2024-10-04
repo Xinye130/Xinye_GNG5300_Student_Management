@@ -1,6 +1,6 @@
 # Student Management System
 
-Student mangagement sysem is a web application with functionalities such as display student list and student detail, add and edit student, and user authentication. This project is built with Django web framework.
+Student management system is a web application with functionalities such as display student list and student detail, add and edit student, and user authentication. This project is built with Django web framework.
 
 ## Installation
 
