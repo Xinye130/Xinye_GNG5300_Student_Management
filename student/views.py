@@ -39,18 +39,34 @@ def student_add(request):
             grade = form.cleaned_data['grade']
             
             # Check if student already exists
-            student = Student(first_name=first_name, last_name=last_name, email=email, date_of_birth=date_of_birth, enrollment_date=enrollment_date, grade=grade)
-            student.save()
-            return render(request, 'student/student_add.html', {'message': 'Student added successfully!'})
+            if Student.objects.filter(first_name=first_name, last_name=last_name, email=email).exists():
+                message = 'Student already exists!'
+            else:
+                student = Student(first_name=first_name, last_name=last_name, email=email, date_of_birth=date_of_birth, enrollment_date=enrollment_date, grade=grade)
+                student.save()
+                message = 'Student added successfully!'
+            return render(request, 'student/student_add.html', {'message': message, 'form': form})
     return render(request, 'student/student_add.html', {'form': form})
 
 @login_required
 def student_edit(request, pk):
-    student = Student.objects.get(pk=pk)
+    try:
+        student = Student.objects.get(pk=pk)
+    except Student.DoesNotExist:
+        return render(request, '404.html', {'message': 'Student not found!'})
+    
     form = EditStudentForm(pk)
+    message = ''
     if request.method == 'POST':
         form = EditStudentForm(pk, request.POST)
         if form.is_valid():
+            # Check if student after modification already exists
+            # First check if the student name and email has changed
+            if not (student.first_name==form.cleaned_data['first_name'] and student.last_name==form.cleaned_data['last_name'] and student.email==form.cleaned_data['email']):
+                if Student.objects.filter(first_name=form.cleaned_data['first_name'], last_name=form.cleaned_data['last_name'], email=form.cleaned_data['email']).exists():
+                    message = 'Student already exists!'
+                    return render(request, 'student/student_edit.html', {'message': message, 'student': student, 'form': form})
+            
             student.first_name = form.cleaned_data['first_name']
             student.last_name = form.cleaned_data['last_name']
             student.email = form.cleaned_data['email']
@@ -58,7 +74,8 @@ def student_edit(request, pk):
             student.enrollment_date = form.cleaned_data['enrollment_date']
             student.grade = form.cleaned_data['grade']
             student.save()
-            return render(request, 'student/student_edit.html', {'message': 'Student updated successfully!', 'student': student})
+            message = 'Student updated successfully!'
+            return render(request, 'student/student_edit.html', {'message': message, 'student': student, 'form': form})
     return render(request, 'student/student_edit.html', {'form': form})
 
 def student_search(request):
